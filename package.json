@@ -1,0 +1,15 @@
+{
+  "name": "frankenstein",
+  "description": "Some fiddling with zombie.js",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "3.3.x",
+    "zombie": "2.0.0-alpha21",
+    "mocha": "1.12.x"
+  },
+  "repository": {
+  	"type": "git",
+  	"url": "coming soon!!!"
+  }
+}
