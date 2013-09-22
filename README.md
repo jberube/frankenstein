@@ -1,8 +1,8 @@
 # frankenstein
 
-Fun with node, zombie.js, ExpressJs, Mocha...
+Fun with nodejs, zombie.js, ExpressJs, Mocha...
 
-# mandatory ASCII art
+## mandatory ASCII art
                  .-""-"-""-.
                 /           \
                 | .--.-.--. |
@@ -23,6 +23,8 @@ Fun with node, zombie.js, ExpressJs, Mocha...
 - mocha
 - ExpressJs
 
+### setup
+
 To install nodejs and npm on Ubuntu, you can try:
 ```make
 make node
@@ -40,5 +42,4 @@ make deps
 
 To run the tests:
 ```make
-make test
-```
+make t
