@@ -3,7 +3,6 @@
 Fun with node, zombie.js, ExpressJs, Mocha...
 
 # mandatory ASCII art
-
                  .-""-"-""-.
                 /           \
                 | .--.-.--. |
