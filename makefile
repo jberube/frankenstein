@@ -15,17 +15,19 @@ packages:
 
 deps: node packages
 
-test:
-	${MOCHA} --reporter spec
+deploy: clean install test run
 
-deploy: test clean
+install:
 	mkdir ../../Web/test
 	cp -r -u -t ../../Web/test web
 
 clean:
 	rm -r -d ../../Web/test/
 
-run: deploy
+run:
 	node server/server
+
+test:
+	${MOCHA} --reporter spec
 
 .PHONY: test
