@@ -59,7 +59,7 @@ app.get(/^\/web\/(\w|\/|\.|-)+$/, function(req, res){
 
 app.get(/^\/api\/(\w|\/|\.)+(\?|$)/, function(req, res){
 	console.log('api call: ' + req.url);
-	var querystring = req.url.split('?')[1]
+    var querystring = req.url.split('?')[1];
 	var payload = qs.parse(querystring);
 	console.info(payload);
 	res.send(payload.code);
