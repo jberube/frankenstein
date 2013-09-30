@@ -68,7 +68,7 @@ app.get(/^\/web(\/(?:[a-zA-Z0-9_.!~*'()-]|%[0-9a-fA-F]{2})*)*(\?|$)/, function(r
 
 app.get(/^\/api\/(\w|\/|\.)+(\?|$)/, function(req, res){
 	console.log('api call: ' + req.url);
-	var querystring = req.url.split('?')[1]
+    var querystring = req.url.split('?')[1];
 	var payload = qs.parse(querystring);
 	console.info(payload);
 	res.send(payload.code);
