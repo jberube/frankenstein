@@ -5,11 +5,11 @@
   "private": true,
   "dependencies": {
     "express": "3.3.x",
-    "zombie": "2.0.0-alpha21",
+    "zombie": "~2.0.0-alpha",
     "mocha": "1.12.x"
   },
   "repository": {
   	"type": "git",
-  	"url": "coming soon!!!"
+  	"url": "git@github.com:jberube/frankenstein.git"
   }
 }

@@ -6,29 +6,8 @@
 	<meta name="viewport" content="width=device-width,initial-scale=1" />
 	<link rel="stylesheet" href="css/style.css" />
 	<link href='css/fonts.css rel='stylesheet' type='text/css' />
-	<script src="libs/jquery-1.10.2.min.js"></script>
-	<script>
-		$(document).ready(function () {
-			$('#save').on('click', function () {
-				$.ajax({
-					type: 'GET',
-					url: "http://127.0.0.1:8080/api/test",
-					data: {
-						code: $('#ide-code').val()
-					},
-					dataType: "text",
-					success: function (data) {
-						console.log('success');
-						console.log(data);
-						$("h1").html(data);
-					},
-					complete: function () {
-						console.log('complete');
-					}
-				});
-			});
-		});
-	</script>
+	<script src="libs/jquery-2.0.3.js" type="text/javascript"></script>
+	<script src="js/index.js" type="text/javascript"></script>
 </head>
 <body>
 	<div id="container">
@@ -42,4 +21,4 @@
 	  </div>
 	</div>
 </body>
-</html>
+</html>	
