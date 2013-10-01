@@ -6,7 +6,7 @@ var baseUrl = 'http://127.0.0.1:8080/'; // local
 //var baseUrl = 'http://julienberube.kd.io/'; // Koding
 
 process.on('error', function (err) {
-	console.error('error in parent:', err);
+	console.trace('error in parent:', err);
 });
 
 describe('frankenstein', function () {
@@ -16,22 +16,22 @@ describe('frankenstein', function () {
 	beforeEach(function (done){
 		server = child_process.fork('server/server.js');
 		server.on('error', function(err) {
-			console.error('PARENT child process error:', err);
+			console.trace('PARENT child process error:', err);
 		});
 		server.on('exit', function(code, signal) {
-			console.debug('PARENT child process exit:', code, signal);
+			console.log('PARENT child process exit:', code, signal);
 		});
 		server.on('close', function(code, signal) {
-			console.debug('PARENT child process close:', code, signal);
+			console.log('PARENT child process close:', code, signal);
 		});
 		server.on('disconnect', function(code, signal) {
-			console.debug('PARENT child process disconnect:', code, signal);
+			console.log('PARENT child process disconnect:', code, signal);
 		});
 		server.on('message', function(message, sendHandle) {
-			console.debug('PARENT child process message:', message, sendHandle);
+			console.log('PARENT child process message:', message, sendHandle);
 			if (message === 'ready') {
 				browser = new Browser({ 
-					debug: true, 
+					debug: false, 
 					runScripts: true,
 					site: baseUrl
 				});

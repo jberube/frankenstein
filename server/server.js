@@ -8,7 +8,7 @@ var port = 8080;
 
 /*** child process poutine ********************/
 process.on('error', function (err) {
-	console.log('error in child:', err);
+	console.trace('error in child:', err);
 });
 process.on('disconnect', function(code, signal) {
 	console.log('CHILD disconnected:', code, signal);
@@ -68,15 +68,14 @@ app.get(/^\/web(\/(?:[a-zA-Z0-9_.!~*'()-]|%[0-9a-fA-F]{2})*)*(\?|$)/, function(r
 
 app.get(/^\/api\/(\w|\/|\.)+(\?|$)/, function(req, res){
 	console.log('api call: ' + req.url);
-    var querystring = req.url.split('?')[1];
+	var querystring = req.url.split('?')[1];
 	var payload = qs.parse(querystring);
-	console.info(payload);
 	res.send(payload.code);
 });
 
 //app.listen(port, '0.0.0.0'); // when testing on Koding
 app.listen(port, '127.0.0.1'); // when testing localy
-console.info('CHILD listening port ' + port);
+console.log('server listening port ' + port);
 
 if (process.connected) process.send('ready');
 
