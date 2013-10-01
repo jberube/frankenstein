@@ -18,11 +18,11 @@ deps: node packages
 deploy: clean install test run
 
 install:
-	mkdir ../../Web/test
-	cp -r -u -t ../../Web/test web
+	#mkdir ../../Web/test
+	#cp -r -u -t ../../Web/test web
 
 clean:
-	rm -r -d ../../Web/test/
+	#rm -r -d ../../Web/test/
 
 run:
 	node server/server

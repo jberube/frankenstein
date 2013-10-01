@@ -8,12 +8,7 @@ $(function () {
 			},
 			dataType: "text",
 			success: function (data) {
-				console.log('success');
-				console.log(data);
 				$("h1").html(data);
-			},
-			complete: function () {
-				console.log('complete');
 			}
 		});
 	});
