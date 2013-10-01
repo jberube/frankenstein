@@ -72,3 +72,10 @@ describe('frankenstein', function () {
 			.then(done, done);
 	});
 });
+
+describe('code', function(){
+	it('can be loaded from the server');
+	
+	it('can be saved to the server');
+});
+
