@@ -8,28 +8,21 @@ var port = 8080;
 
 /*** child process poutine ********************/
 process.on('error', function (err) {
-	console.trace('error in child:', err);
+	console.trace('error in server/server:', err);
 });
 process.on('disconnect', function(code, signal) {
-	console.log('CHILD disconnected:', code, signal);
 	process.exit();
-});
-process.on('message', function(m) {
-  console.log('CHILD got message:', m);
 });
 
 /*** allow CORS *******************************/
 app.all('*', function(req, res, next) {
-	console.log('incoming request: ' + req.url);
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header("Access-Control-Allow-Headers", "X-Requested-With");
 	next();
 });
 
 /*** helper methods ***************************/
-//todo: don't polute the global object
 function getMimeType(req, res) {
-	//todo: store elsewhere
 	var mimeTypes = {
 		"html": "text/html",
 		"jpeg": "image/jpeg",
@@ -47,9 +40,7 @@ function getMimeType(req, res) {
 /*** Routes ***********************************/
 // all files under web are served as file
 app.get(/^\/web(\/(?:[a-zA-Z0-9_.!~*'()-]|%[0-9a-fA-F]{2})*)*(\?|$)/, function(req, res){
-	console.log('serving as file: ' + req.url);
 	var path = process.cwd() + req.url;
-	console.log('path: ' + path);
 	
 	fs.readFile(path, {encoding: 'utf-8'}, function (err, data) {
 		if (err) {
@@ -66,16 +57,28 @@ app.get(/^\/web(\/(?:[a-zA-Z0-9_.!~*'()-]|%[0-9a-fA-F]{2})*)*(\?|$)/, function(r
 	});
 });
 
-app.get(/^\/api\/(\w|\/|\.)+(\?|$)/, function(req, res){
-	console.log('api call: ' + req.url);
-	var querystring = req.url.split('?')[1];
-	var payload = qs.parse(querystring);
-	res.send(payload.code);
+var code = 'my.last.saved(code);';
+app.get(/^\/api\/code(\?|$)/, function (req, res) {
+	var data = JSON.stringify({
+		code: code
+	});
+	res.writeHead(200, {'Content-Type': 'application/json'});
+	res.end(data);
 });
 
-//app.listen(port, '0.0.0.0'); // when testing on Koding
+app.post(/^\/api\/code(\?|$)/, function (req, res) {
+	data = '';
+	req.on('data', function (chunk) {
+		data += chunk;
+	});
+	req.on('end', function (){
+		code = qs.parse(data).code;
+		res.writeHead(200, {'Content-Type': 'text/plain'});
+		res.end('');
+	});
+});
+
 app.listen(port, '127.0.0.1'); // when testing localy
-console.log('server listening port ' + port);
 
 if (process.connected) process.send('ready');
 

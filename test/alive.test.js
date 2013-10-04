@@ -2,37 +2,32 @@ var Browser = require("zombie"),
 	assert = require("assert"),
 	server_harness = require('./lib/server_harness');
 
-var baseUrl = 'http://127.0.0.1:8080/'; // local
-//var baseUrl = 'http://julienberube.kd.io/'; // Koding
+var browserOptions = { 
+	debug: false, 
+	runScripts: true,
+	site: 'http://127.0.0.1:8080/'
+};
 
 process.on('error', function (err) {
 	console.trace('error in parent:', err);
 });
 
 describe('frankenstein', function () {
-	var browser;
-	var server;
+	var browser, harness;
 
 	beforeEach(function (done){
-		harness = server_harness.harness('server/server', { debug: false});
-		harness.on('message', function(message, sendHandle) {
-			console.log('PARENT child process message:', message, sendHandle);
-			if (message === 'ready') {
-				browser = new Browser({ 
-					debug: false, 
-					runScripts: true,
-					site: baseUrl
-				});
-				done();
-			}
-		});
+		harness = server_harness.harness('server/server', { debug: false})
+			.on('message', function (message, sendHandle) {
+				if (message === 'ready') {
+					browser = new Browser(browserOptions);
+					done();
+				}
+			});
 	});
 
 	afterEach(function (){
 		browser = null;
-		if (harness.connected) {
-			harness.disconnect();
-		}
+		if (harness.connected) harness.disconnect();
 	});
 	
 	it('is alive!', function (done) {
@@ -44,26 +39,17 @@ describe('frankenstein', function () {
 	});
 	
 	it('can assert something in the DOM of a web page', function (done) {
-		browser
-			.visit('web/index.html')
+		browser.visit('web/index.html')
 			.then(function() {
-				assert.equal(browser.text('H1'), 'Code');
-			})
-			.then(function () {
-				return browser
-					.fill('*#ide-code', 'unicorn')
-					.pressButton('#save');
-			})
-			.then(function() {
-    	  assert.equal(browser.text('H1'), 'unicorn');
+				assert.equal(browser.text('#ide-status'), '');
+
+				browser
+					.fill('*#ide-code', 'some(code);')
+					.pressButton('#save')
+					.then(function () {
+    	  		assert.equal(browser.text('#ide-status'), 'saved');
+    	  	});
 			})
 			.then(done, done);
 	});
 });
-
-describe('code', function(){
-	it('can be loaded from the server');
-	
-	it('can be saved to the server');
-});
-

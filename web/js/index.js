@@ -1,14 +1,23 @@
 $(function () {
+	
+	$.ajax({
+		type: 'GET',
+		url: "/api/code",
+		success: function (data) {
+			$('#ide-code').html(data.code);
+		}
+	});
+	
 	$('#save').on('click', function () {
 		$.ajax({
-			type: 'GET',
-			url: "/api/test",
+			type: 'POST',
+			url: "/api/code",
 			data: {
 				code: $('#ide-code').val()
 			},
 			dataType: "text",
 			success: function (data) {
-				$("h1").html(data);
+				$("#ide-status").text('saved');
 			}
 		});
 	});
