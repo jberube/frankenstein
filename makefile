@@ -1,4 +1,5 @@
-MOCHA = ./node_modules/.bin/mocha
+#MOCHA = ./node_modules/.bin/mocha
+MOCHA = mocha
 NPM_VER = $(shell npm --version)
 
 node: 
