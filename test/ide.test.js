@@ -60,5 +60,7 @@ describe('user\'s code', function() {
 				assert.equal(browser.text('#ide-code'), 'my.last.saved(code);');
 			}).then(done, done);
 	});
+
+	it("can handle an event that writes in the console");
 });
 
