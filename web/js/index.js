@@ -1,12 +1,8 @@
 $(function () {
-	
-	$.ajax({
-		type: 'GET',
-		url: "/api/code",
-		success: function (data) {
-			$('#ide-code').html(data.code);
-		}
-	});
+
+	reloadCode();	
+
+	$('#ide-reload').on('click', reloadCode);
 	
 	$('#save').on('click', function () {
 		$.ajax({
@@ -22,14 +18,15 @@ $(function () {
 		});
 	});
 	
-	$('#ide-reload').on('click', function () {
-		$.ajax({
-			type: 'GET',
-			url: "/api/code",
-			success: function (data) {
-				$('#ide-code').html(data.code);
-			}
-		});
-	});
 });
+
+function reloadCode() {
+	$.ajax({
+		type: 'GET',
+		url: "/api/code",
+		success: function (data) {
+			$('#ide-code').html(data.code);
+		}
+	});
+}
 
