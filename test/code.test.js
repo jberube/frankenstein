@@ -52,6 +52,13 @@ describe('user\'s code', function() {
 			}).then(done, done);
 	});
 
-	it('can be reloaded from to the server');
+	it('can be reloaded from to the server', function (done) {
+		browser.visit('web/index.html')
+			.then(function () {
+				return browser.fill('#ide-code', 'some.other(code);').pressButton('#ide-reload');
+			}).then(function () {
+				assert.equal(browser.text('#ide-code'), 'my.last.saved(code);');
+			}).then(done, done);
+	});
 });
 

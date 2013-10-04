@@ -21,5 +21,15 @@ $(function () {
 			}
 		});
 	});
+	
+	$('#ide-reload').on('click', function () {
+		$.ajax({
+			type: 'GET',
+			url: "/api/code",
+			success: function (data) {
+				$('#ide-code').html(data.code);
+			}
+		});
+	});
 });
 
