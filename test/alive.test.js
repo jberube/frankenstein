@@ -1,6 +1,6 @@
 var Browser = require("zombie"),
 	assert = require("assert"),
-	child_process = require('child_process');
+	server_harness = require('./lib/server_harness');
 
 var baseUrl = 'http://127.0.0.1:8080/'; // local
 //var baseUrl = 'http://julienberube.kd.io/'; // Koding
@@ -14,20 +14,8 @@ describe('frankenstein', function () {
 	var server;
 
 	beforeEach(function (done){
-		server = child_process.fork('server/server.js');
-		server.on('error', function(err) {
-			console.trace('PARENT child process error:', err);
-		});
-		server.on('exit', function(code, signal) {
-			console.log('PARENT child process exit:', code, signal);
-		});
-		server.on('close', function(code, signal) {
-			console.log('PARENT child process close:', code, signal);
-		});
-		server.on('disconnect', function(code, signal) {
-			console.log('PARENT child process disconnect:', code, signal);
-		});
-		server.on('message', function(message, sendHandle) {
+		harness = server_harness.harness('server/server', { debug: false});
+		harness.on('message', function(message, sendHandle) {
 			console.log('PARENT child process message:', message, sendHandle);
 			if (message === 'ready') {
 				browser = new Browser({ 
@@ -42,8 +30,8 @@ describe('frankenstein', function () {
 
 	afterEach(function (){
 		browser = null;
-		if (server.connected) {
-			server.disconnect();
+		if (harness.connected) {
+			harness.disconnect();
 		}
 	});
 	
