@@ -30,16 +30,13 @@ describe('user\'s code', function() {
 		if (harness.connected) harness.disconnect();
 	});
 	
-	it('is displayed in ide when page loads', function (done) {
-		this.timeout(4000);
+	it('is loaded in ide when page loads', function (done) {
 		browser.visit('web/index.html')
 			.then(function () {
-				browser.wait(3000, function () {
-					assert.equal(browser.text('#ide-code'), 'my.last.saved(code);');
-					done();
-				});
-			})
-			.then(null, done);
+				return browser.wait(3000);
+			}).then(function () {
+				assert.equal(browser.text('#ide-code'), 'my.last.saved(code);');
+			}).then(done, done);
 	});
 	
 	it('can be saved', function (done) {
@@ -54,8 +51,6 @@ describe('user\'s code', function() {
 				assert.equal(browser.text('#ide-code'), 'some.new(code);');
 			}).then(done, done);
 	});
-		
-	it('can be saved to the server');
 
 	it('can be reloaded from to the server');
 });
