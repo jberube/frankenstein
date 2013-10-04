@@ -4,7 +4,7 @@ $(function () {
 
 	$('#ide-reload').on('click', reloadCode);
 	
-	$('#save').on('click', function () {
+	$('#ide-save').on('click', function () {
 		$.ajax({
 			type: 'POST',
 			url: "/api/code",

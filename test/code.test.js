@@ -42,7 +42,7 @@ describe('user\'s code', function() {
 	it('can be saved', function (done) {
 		browser.visit('web/index.html')
 			.then(function () {
-				return browser.fill('#ide-code', 'some.new(code);').pressButton('#save');
+				return browser.fill('#ide-code', 'some.new(code);').pressButton('#ide-save');
 			}).then(function () {
 				return browser.visit('web/index.html');
 			}).then(function () {

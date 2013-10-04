@@ -45,7 +45,7 @@ describe('frankenstein', function () {
 
 				browser
 					.fill('*#ide-code', 'some(code);')
-					.pressButton('#save')
+					.pressButton('#ide-save')
 					.then(function () {
     	  		assert.equal(browser.text('#ide-status'), 'saved');
     	  	});
