@@ -9,7 +9,7 @@ var port = 8080;
 
 /*** state ************************************/
 var code = 'console.log(signal.type);',
-	ideConsole = ['welcome!'];
+	ideConsole = ['welcome, nanoïd.', 'type "help" for help'];
 	
 /*** child process poutine ********************/
 process.on('error', function (err) {

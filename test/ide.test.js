@@ -31,50 +31,69 @@ describe('user\'s code', function() {
 	});
 	
 	it('is loaded in ide when page loads', function (done) {
-		browser.visit('web/index.html')
-			.then(function () {
-				return browser.wait(3000);
-			}).then(function () {
-				assert.equal(browser.text('#ide-code'), 'console.log(signal.type);');
-			}).then(done, done);
+		loadIde()
+		.then(function () { expect.codeIs('console.log(signal.type);');	})
+		.then(done, done);
 	});
 	
 	it('can be saved', function (done) {
-		browser.visit('web/index.html')
-			.then(function () {
-				return browser.fill('#ide-code', 'some.new(code);').pressButton('#ide-save');
-			}).then(function () {
-				return browser.visit('web/index.html');
-			}).then(function () {
-				return browser.wait(1000);
-			}).then(function () {
-				assert.equal(browser.text('#ide-code'), 'some.new(code);');
-			}).then(done, done);
+		loadIde()
+		.then(function () { return savesCode('some.new(code);'); })
+		.then(function () { return loadIde();	})
+		.then(function () { expect.codeIs('some.new(code);');	})
+		.then(done, done);
 	});
-
+	
 	it('can be reloaded from to the server', function (done) {
-		browser.visit('web/index.html')
-			.then(function () {
-				return browser.fill('#ide-code', 'some.other(code);').pressButton('#ide-reload');
-			}).then(function () {
-				assert.equal(browser.text('#ide-code'), 'console.log(signal.type);');
-			}).then(done, done);
+		loadIde()
+		.then(function () { return enterCode('some.other(code);'); })
+		.then(function (code) { return code.pressButton('#ide-reload'); })
+		.then(function () { expect.codeIs('console.log(signal.type);');	})
+		.then(done, done);
 	});
 
 	it("can handle an event that writes in the console", function (done) {
-		harness.setCode('console.log(\'handled event: \' + signal.type);');
+		given.user().hasCode('console.log(\'handled event: \' + signal.type);');
+		given.user().handlesSignal({'type' : 'BRAINS'});
 
-		harness.signal({'type' : 'BRAINS'});
-		
-		browser.visit('web/index.html')
-			.then(function () {
-				return browser.wait(500);
-			}).then(function () {
-				var logs = browser.document.getElementById('ide-console-out');
-				assert.equal(logs.innerHTML, ['welcome!', 'handled event: BRAINS'].join('\r\n'));
-			}).then(done, done);
+		loadIde()
+		.then(function () { expect.lastLogIs('handled event: BRAINS'); })
+		.then(done, done);
 	});
 	
 	it("console content is loaded when the page loads");
-});
 
+	function loadIde() {
+		return browser.visit('web/index.html')
+			.then(function () {
+				return browser.wait(500);
+			});
+	}
+	
+	function enterCode(code) {
+		return browser.fill('#ide-code', code);
+	}
+	
+	function savesCode(code) {
+		return enterCode(code).pressButton('#ide-save');
+	}
+
+	function lastLogEntry() {
+		var logs = browser.document.getElementById('ide-console-out').innerHTML.split('\r\n');
+		return logs[logs.length-1];
+	}
+	
+	var given = {
+		user : function () {
+			return {
+				hasCode : function (code) { harness.setCode(code); },
+				handlesSignal : function (signal) {	harness.signal(signal); }
+			};
+		}
+	};
+
+	var expect = {
+		codeIs : function (code) { assert.equal(browser.text('#ide-code'), code); },
+		lastLogIs : function (entry) { assert.equal(lastLogEntry(), entry); }
+	};
+});
