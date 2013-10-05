@@ -33,7 +33,7 @@ function reloadCode() {
 		type: 'GET',
 		url: "/api/ide/console/logs",
 		success: function (data) {
-			$('#ide-console-out').html(data.logs);
+			$('#ide-console-out').html(data.logs.join('\r\n'));
 		}
 	});
 }

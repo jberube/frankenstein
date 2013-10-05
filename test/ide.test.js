@@ -35,7 +35,7 @@ describe('user\'s code', function() {
 			.then(function () {
 				return browser.wait(3000);
 			}).then(function () {
-				assert.equal(browser.text('#ide-code'), 'my.last.saved(code);');
+				assert.equal(browser.text('#ide-code'), 'console.log(signal.type);');
 			}).then(done, done);
 	});
 	
@@ -57,7 +57,7 @@ describe('user\'s code', function() {
 			.then(function () {
 				return browser.fill('#ide-code', 'some.other(code);').pressButton('#ide-reload');
 			}).then(function () {
-				assert.equal(browser.text('#ide-code'), 'my.last.saved(code);');
+				assert.equal(browser.text('#ide-code'), 'console.log(signal.type);');
 			}).then(done, done);
 	});
 
@@ -68,9 +68,10 @@ describe('user\'s code', function() {
 		
 		browser.visit('web/index.html')
 			.then(function () {
-				return browser.wait(1000);
+				return browser.wait(500);
 			}).then(function () {
-				assert.equal(browser.text('#ide-console-out'), 'handled event: BRAINS');
+				var logs = browser.document.getElementById('ide-console-out');
+				assert.equal(logs.innerHTML, ['welcome!', 'handled event: BRAINS'].join('\r\n'));
 			}).then(done, done);
 	});
 	

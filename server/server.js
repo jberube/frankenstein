@@ -8,9 +8,9 @@ var app = express();
 var port = 8080;
 
 /*** state ************************************/
-var code = 'my.last.saved(code);',
-	ideConsole = '';
-
+var code = 'console.log(signal.type);',
+	ideConsole = ['welcome!'];
+	
 /*** child process poutine ********************/
 process.on('error', function (err) {
 	console.trace('error in server/server:', err);
@@ -30,7 +30,7 @@ process.on('signal', function (signal)  {
 		api : {}, 
 		console : { 
 			log : function (arg) {
-				ideConsole += arg;
+				ideConsole.push(arg);
 			}
 		},
 		signal : signal
