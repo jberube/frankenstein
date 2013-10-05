@@ -61,6 +61,19 @@ describe('user\'s code', function() {
 			}).then(done, done);
 	});
 
-	it("can handle an event that writes in the console");
+	it("can handle an event that writes in the console", function (done) {
+		harness.setCode('console.log(\'handled event: \' + signal.type);');
+
+		harness.signal({'type' : 'BRAINS'});
+		
+		browser.visit('web/index.html')
+			.then(function () {
+				return browser.wait(1000);
+			}).then(function () {
+				assert.equal(browser.text('#ide-console-out'), 'handled event: BRAINS');
+			}).then(done, done);
+	});
+	
+	it("console content is loaded when the page loads");
 });
 

@@ -2,9 +2,14 @@ var express = require('express'),
 	url = require('url'),
 	qs = require('querystring'),
 	fs  = require('fs'),
-	path = require('path');
+	path = require('path'),
+	vm = require('vm');
 var app = express();
 var port = 8080;
+
+/*** state ************************************/
+var code = 'my.last.saved(code);',
+	ideConsole = '';
 
 /*** child process poutine ********************/
 process.on('error', function (err) {
@@ -12,6 +17,28 @@ process.on('error', function (err) {
 });
 process.on('disconnect', function(code, signal) {
 	process.exit();
+});
+
+process.on('message', function (event) {
+	if (event.type === 'fire signal')
+		process.emit('signal', event.signal);
+	else
+		code = event.code;	
+});
+process.on('signal', function (signal)  {
+	var sandbox = { 
+		api : {}, 
+		console : { 
+			log : function (arg) {
+				ideConsole += arg;
+			}
+		},
+		signal : signal
+	};
+	var context = vm.createContext(sandbox);
+	
+	var callback = ';(function (api, console, signal) {' + code + '})(api, console, signal)';
+	vm.runInContext(callback, context, 'signal.vm');	
 });
 
 /*** allow CORS *******************************/
@@ -57,7 +84,6 @@ app.get(/^\/web(\/(?:[a-zA-Z0-9_.!~*'()-]|%[0-9a-fA-F]{2})*)*(\?|$)/, function(r
 	});
 });
 
-var code = 'my.last.saved(code);';
 app.get(/^\/api\/code(\?|$)/, function (req, res) {
 	var data = JSON.stringify({
 		code: code
@@ -76,6 +102,14 @@ app.post(/^\/api\/code(\?|$)/, function (req, res) {
 		res.writeHead(200, {'Content-Type': 'text/plain'});
 		res.end('');
 	});
+});
+
+app.get(/^\/api\/ide\/console\/logs(\?|$)/, function (req, res) {
+	var data = JSON.stringify({
+		logs: ideConsole
+	});
+	res.writeHead(200, {'Content-Type': 'application/json'});
+	res.end(data);
 });
 
 app.listen(port, '127.0.0.1'); // when testing localy

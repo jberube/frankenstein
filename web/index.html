@@ -12,12 +12,13 @@
 		<div id="main" role="main" class="hellobox">
 			<h1>Code</h1>
 			<form>
-				<p>;(function(api) {</p>
+				<p>;(function(api, console, signal) {</p>
 				<textarea id="ide-code" rows="10" cols="100"></textarea>
 				<p>})(api); // have fun!</p>
 				<input id="ide-save" type="button" value="save" />
 				<input id="ide-reload" type="button" value="reload" />
 				<p id="ide-status"></p>
+				<textarea id="ide-console-out" rows="10" cols="100">welcome!</textarea>
 			</form>
 	  </div>
 	</div>

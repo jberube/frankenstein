@@ -17,7 +17,15 @@ module.exports.harness = function (source, options) {
 	server.on('disconnect', function(code, signal) {
 		if (settings.debug) console.log('PARENT child process disconnect:', code, signal);
 	});
+	
+	server.setCode = function (code) {
+		server.send({type : 'save code', code : code});
+	};
 
+	server.signal = function (signal) {
+		server.send({type : 'fire signal', signal : signal});
+	};
+	
 	return server;
 };
 

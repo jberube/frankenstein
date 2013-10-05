@@ -28,5 +28,13 @@ function reloadCode() {
 			$('#ide-code').html(data.code);
 		}
 	});
+
+	$.ajax({
+		type: 'GET',
+		url: "/api/ide/console/logs",
+		success: function (data) {
+			$('#ide-console-out').html(data.logs);
+		}
+	});
 }
 
