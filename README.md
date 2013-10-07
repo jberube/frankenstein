@@ -63,7 +63,7 @@ mocha -R nyan
 
 ## windows
 
-I haven't found a sweat way to run mocha tests on windows, but that works:
+I haven't found a sweet way to run mocha tests on windows, but that works:
 ```
 >node node_modules\mocha\bin\mocha
 ```
