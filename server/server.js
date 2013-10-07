@@ -21,15 +21,23 @@ process.on('disconnect', function(code, signal) {
 });
 
 /*** signal handling **************************/
-process.on('message', function (event) {
-	if (event.type === 'fire signal') {
+var handlers = {
+	'fire signal': function (event) {
 		process.emit('signal', event.signal);
-	}
-	else if (event.type === 'set console entries') {
+	},
+	'set console entries' : function (event) {
 		ideConsole = event.entries;
-	}
-	else {
+	},
+	'save code' : function (event) {
 		code = event.code;
+	}
+};
+process.on('message', function (event) {
+	var fn = handlers[event.type];
+	if (fn) {
+		fn(event);
+	} else {
+		throw 'event unhandled: ' + JSON.stringify(event);	
 	}
 });
 
