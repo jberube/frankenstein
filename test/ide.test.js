@@ -52,6 +52,14 @@ describe('user\'s code', function() {
 		.then(done, done);
 	});
 
+	it("console entries are loaded when the page loads", function (done) {
+		given.user().hasConsoleEntries(['welcome!', 'type "help" for help']);
+		
+		loadIde()
+		.then(function () { expect.logIs(['welcome!', 'type "help" for help']);	})
+		.then(done, done);
+	});
+
 	it("can handle an event that writes in the console", function (done) {
 		given.user().hasCode('console.log(\'handled event: \' + signal.type);');
 		given.user().handlesSignal({'type' : 'BRAINS'});
@@ -61,8 +69,6 @@ describe('user\'s code', function() {
 		.then(done, done);
 	});
 	
-	it("console content is loaded when the page loads");
-
 	function loadIde() {
 		return browser.visit('web/index.html')
 			.then(function () {
@@ -83,17 +89,23 @@ describe('user\'s code', function() {
 		return logs[logs.length-1];
 	}
 	
+	function logEntries() {
+		return browser.document.getElementById('ide-console-out').innerHTML.split('\r\n');
+	}
+	
 	var given = {
 		user : function () {
 			return {
 				hasCode : function (code) { harness.setCode(code); },
-				handlesSignal : function (signal) {	harness.signal(signal); }
+				handlesSignal : function (signal) {	harness.signal(signal); },
+				hasConsoleEntries : function (entries) { harness.setConsoleEntries(entries); }
 			};
 		}
 	};
 
 	var expect = {
 		codeIs : function (code) { assert.equal(browser.text('#ide-code'), code); },
-		lastLogIs : function (entry) { assert.equal(lastLogEntry(), entry); }
+		lastLogIs : function (entry) { assert.equal(lastLogEntry(), entry); },
+		logIs : function (entries) { assert.deepEqual(logEntries(), entries); }
 	};
 });

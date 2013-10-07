@@ -15,16 +15,24 @@ var code = 'console.log(signal.type);',
 process.on('error', function (err) {
 	console.trace('error in server/server:', err);
 });
+
 process.on('disconnect', function(code, signal) {
 	process.exit();
 });
 
+/*** signal handling **************************/
 process.on('message', function (event) {
-	if (event.type === 'fire signal')
+	if (event.type === 'fire signal') {
 		process.emit('signal', event.signal);
-	else
-		code = event.code;	
+	}
+	else if (event.type === 'set console entries') {
+		ideConsole = event.entries;
+	}
+	else {
+		code = event.code;
+	}
 });
+
 process.on('signal', function (signal)  {
 	var sandbox = { 
 		api : {}, 

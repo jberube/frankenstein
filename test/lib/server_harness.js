@@ -25,6 +25,10 @@ module.exports.harness = function (source, options) {
 	server.signal = function (signal) {
 		server.send({type : 'fire signal', signal : signal});
 	};
+
+	server.setConsoleEntries = function (entries) {
+		server.send({type : 'set console entries', entries : entries});
+	};
 	
 	return server;
 };
