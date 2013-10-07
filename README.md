@@ -1,8 +1,8 @@
 # frankenstein
 
-Fun with nodejs, zombie.js, ExpressJs, Mocha...
+A walking skeleton of a system-wide automated test with nodejs, zombie.js, ExpressJs, Mocha...
 
-## mandatory ASCII art
+# mandatory ASCII art
                  .-""-"-""-.
                 /           \
                 | .--.-.--. |
@@ -15,31 +15,60 @@ Fun with nodejs, zombie.js, ExpressJs, Mocha...
                  \__\   /__/
                      '-'
 
-## requirements
+# requirements
 
 - nodejs
 - npm
-- zombie.js
-- mocha
-- ExpressJs
 
-### setup
+## windows
 
-To install nodejs and npm on Ubuntu, you can try:
-```make
-make node
+you also need:
+- python for windows, version >= 2.5 < 3.0.0 . >= 3.0.0 won't work (node-gyp require >= 2.5 < 3.0.0).
+
+# setup
+
+If not already done, install the latest version of node and npm, and then:
+```
+npm install
 ```
 
-To install the packages this project depends on:
-```make
-make packages
+# running the tests
+
+## linux
+
+Check if mocha is installed globally:
+```
+mocha -V
 ```
 
-To install both:
-```make
-make deps
+If not, you may install it like so:
+```
+npm install -g mocha 
 ```
 
-To run the tests:
+To run the tests without installing mocha globally:
 ```make
-make t
+make tests
+```
+
+...or simply, if you installed mocha globally:
+```
+mocha
+```
+
+...and if you're cool enough:
+```
+mocha -R nyan
+```
+
+## windows
+
+I haven't found a sweat way to run mocha tests on windows, but that works:
+```
+>node node_modules\mocha\bin\mocha
+```
+
+cool kids use:
+```
+>node node_modules\mocha\bin\mocha -R nyan
+```
