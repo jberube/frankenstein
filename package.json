@@ -3,18 +3,18 @@
   "description": "Some fiddling with zombie.js",
   "version": "0.0.1",
   "private": true,
+	"repository": {
+  	"type": "git",
+  	"url": "git@github.com:jberube/frankenstein.git"
+  },
+	"engines": {
+		"node": "0.10.20"
+	},
   "dependencies": {
     "express": "3.3.x"
   },
   "devDependencies":{
     "zombie": "~2.0.0-alpha",
     "mocha": "1.12.x"
-  },
-  "scripts" : {
-  	"preinstall" : "npm i -g mocha --unsafe-perm"
-  },
-  "repository": {
-  	"type": "git",
-  	"url": "git@github.com:jberube/frankenstein.git"
   }
 }
