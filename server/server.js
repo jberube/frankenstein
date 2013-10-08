@@ -82,23 +82,7 @@ function getMimeType(req, res) {
 
 /*** Routes ***********************************/
 // all files under web are served as file
-app.get(/^\/web(\/(?:[a-zA-Z0-9_.!~*'()-]|%[0-9a-fA-F]{2})*)*(\?|$)/, function(req, res){
-	var path = process.cwd() + req.url;
-	
-	fs.readFile(path, {encoding: 'utf-8'}, function (err, data) {
-		if (err) {
-			console.error('file not found: ' + path, err);
-			res.statusCode = 404;
-			res.end();
-			return;
-		}
-		
-		getMimeType(req, res);
-		res.setHeader('Content-Length', data.length);
-		res.statusCode = 200;
-		res.end(data, 'utf-8');
-	});
-});
+app.use(express.static(path.join(process.cwd(), 'web')));
 
 app.get(/^\/api\/code(\?|$)/, function (req, res) {
 	var data = JSON.stringify({
