@@ -70,7 +70,7 @@ describe('user\'s code', function() {
 	});
 	
 	function loadIde() {
-		return browser.visit('web/index.html')
+		return browser.visit('index.html')
 			.then(function () {
 				return browser.wait(500);
 			});

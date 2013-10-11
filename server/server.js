@@ -3,13 +3,53 @@ var express = require('express'),
 	qs = require('querystring'),
 	fs  = require('fs'),
 	path = require('path'),
-	vm = require('vm');
+	vm = require('vm'),
+	events = require('events'),
+	util = require('util');
+	
 var app = express();
 var port = 8080;
 
+/* module *************************************/
+var Server = module.exports = function () {
+	events.EventEmitter.call(this);
+	this.connected = true;
+};
+util.inherits(Server, events.EventEmitter);
+
+Server.connect = function() {
+	return new Server();
+};
+
+Server.prototype.disconnect = function() {
+	this.connected = false;
+	this.emit('disconnect', this);
+};
+
+Server.prototype.signal = function (type, payload) {
+	this.emit('signal', {type : type, payload : payload});
+};
+
+Server.prototype.log = function (msg) {
+	return ideConsole.push(msg);
+};
+
+Server.prototype.pushCode = function (code, fn) {
+	this.code = code;
+	if (typeof fn === 'function') fn(this);
+};
+
+Server.prototype.getCode = function () {
+	return this.code;
+};
+
+Server.prototype.getLastLog = function () {
+	return ideConsole[ideConsole.length-1];
+};
+
 /*** state ************************************/
 var code = 'console.log(signal.type);',
-	ideConsole = ['welcome, nanoïd.', 'type "help" for help'];
+ideConsole = ['welcome, nanoïd.', 'type "help" for help'];
 	
 /*** child process poutine ********************/
 process.on('error', function (err) {
@@ -82,6 +122,7 @@ function getMimeType(req, res) {
 
 /*** Routes ***********************************/
 // all files under web are served as file
+//TODO: remove
 app.use(express.static(path.join(process.cwd(), 'web')));
 
 app.get(/^\/api\/code(\?|$)/, function (req, res) {

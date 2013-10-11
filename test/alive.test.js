@@ -31,7 +31,7 @@ describe('frankenstein', function () {
 	});
 	
 	it('is alive!', function (done) {
-		browser.visit('web/index.html')
+		browser.visit('index.html')
 			.then(function () {
 				assert(browser.success, 'huho, didn\'t succeeded.');
 				done();
@@ -39,7 +39,7 @@ describe('frankenstein', function () {
 	});
 	
 	it('can assert something in the DOM of a web page', function (done) {
-		browser.visit('web/index.html')
+		browser.visit('index.html')
 			.then(function() {
 				assert.equal(browser.text('#ide-status'), '');
 
