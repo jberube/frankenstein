@@ -1,3 +1,25 @@
+# notes
+
+## goals
+- decouple 'server' from 'REST api'
+- allow unit testing of each parts
+- clearly define responsabilities of each parts
+- identify the means of communication between parts
+
+## parts
+server: business logic thingy, allows the magc to happen
+REST api: REST api, allows calls to be made to the server via http requests
+SysTest: system tests, make sure everything actually works 
+server_harness: allow the SysTests to provoke things and make assertions on the server
+client_harness: allow the SysTests to provoke things and make assertions in the page
+
+## schema
+```
+[SysTest] <-js-> [server_harness] <-?-----> [server] <-js- [REST api] <-.
+       A                                                                |
+       '----js-> [client_harness] -zombie-> [page] -http----------------'
+```
+
 # backlog
 stuff to be done
 

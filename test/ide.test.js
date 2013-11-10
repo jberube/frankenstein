@@ -2,7 +2,7 @@ var Browser = require("zombie"),
 	assert = require("assert"),
 	server_harness = require('./lib/server_harness');
 
-var browserOptions = { 
+var browserOptions = {
 	debug: false, 
 	runScripts: true,
 	site: 'http://127.0.0.1:8080/'
@@ -12,67 +12,73 @@ process.on('error', function (err) {
 	console.trace('error in parent:', err);
 });
 
-describe('user\'s code', function() {
+describe('user\'s ide', function() {
 	var browser, harness;
 
 	beforeEach(function (done) {
-		harness = server_harness.harness('server/server', { debug: false})
-			.on('message', function (message, sendHandle) {
-				if (message === 'ready') {
-					browser = new Browser(browserOptions);
-					done();
-				}
-			});
+		harness = server_harness.connect('127.0.0.1', 8080, function () {
+			browser = new Browser(browserOptions);
+			done();
+		});
+	});
+	
+	afterEach(function (done) {
+		harness.close(done);
 	});
 
-	afterEach(function () {
-		browser = null;
-		if (harness.connected) harness.disconnect();
+	describe('code', function () {	
+		it('is loaded in ide when page loads', function (done) {
+			loadIde()
+			.then(function () { expect.codeIs('console.log(signal.type);');	})
+			.then(done, done);
+		});
+	
+		it('can be saved', function (done) {
+			loadIde()
+			.then(function () { return savesCode('some.new(code);'); })
+			.then(function () { return loadIde();	})
+			.then(function () { expect.codeIs('some.new(code);');	})
+			.then(done, done);
+		});
+	
+		it('can be reloaded from the server', function (done) {
+			loadIde()
+			.then(function () { return enterCode('some.other(code);'); })
+			.then(function (code) { return code.pressButton('#ide-reload'); })
+			.then(function () { expect.codeIs('console.log(signal.type);');	})
+			.then(done, done);
+		});
 	});
 	
-	it('is loaded in ide when page loads', function (done) {
-		loadIde()
-		.then(function () { expect.codeIs('console.log(signal.type);');	})
-		.then(done, done);
-	});
-	
-	it('can be saved', function (done) {
-		loadIde()
-		.then(function () { return savesCode('some.new(code);'); })
-		.then(function () { return loadIde();	})
-		.then(function () { expect.codeIs('some.new(code);');	})
-		.then(done, done);
-	});
-	
-	it('can be reloaded from to the server', function (done) {
-		loadIde()
-		.then(function () { return enterCode('some.other(code);'); })
-		.then(function (code) { return code.pressButton('#ide-reload'); })
-		.then(function () { expect.codeIs('console.log(signal.type);');	})
-		.then(done, done);
-	});
-
-	it("console entries are loaded when the page loads", function (done) {
-		given.user().hasConsoleEntries(['welcome!', 'type "help" for help']);
+	describe('console', function () {
+		it('entries are loaded when the page loads', function (done) {
+			given.user().hasConsoleEntries(['welcome!', 'type "help" for help']);
 		
-		loadIde()
-		.then(function () { expect.logIs(['welcome!', 'type "help" for help']);	})
-		.then(done, done);
+			loadIde()
+			.then(function () { expect.logIs(['welcome!', 'type "help" for help']);	})
+			.then(done, done);
+		});
 	});
 
-	it("can handle an event that writes in the console", function (done) {
-		given.user().hasCode('console.log(\'handled event: \' + signal.type);');
-		given.user().handlesSignal({'type' : 'BRAINS'});
+	describe('game', function () {
+		it('can handle an event that writes in the console', function (done) {
+			given.user().hasCode('console.log(\'handled event: \' + signal.type);');
+			given.user().handlesSignal({type: 'BRAINS'});
 
-		loadIde()
-		.then(function () { expect.lastLogIs('handled event: BRAINS'); })
-		.then(done, done);
+			loadIde()
+			.then(function () { expect.lastLogIs('handled event: BRAINS'); })
+			.then(done, done);
+		});
 	});
 	
 	function loadIde() {
 		return browser.visit('index.html')
 			.then(function () {
-				return browser.wait(500);
+				assert.equal(browser.statusCode, 200);
+				return browser.wait(50);
+			})
+			.fail(function (err) {
+				throw err;
 			});
 	}
 	
@@ -85,7 +91,7 @@ describe('user\'s code', function() {
 	}
 
 	function lastLogEntry() {
-		var logs = browser.document.getElementById('ide-console-out').innerHTML.split('\r\n');
+		var logs = logEntries();
 		return logs[logs.length-1];
 	}
 	
@@ -97,7 +103,7 @@ describe('user\'s code', function() {
 		user : function () {
 			return {
 				hasCode : function (code) { harness.setCode(code); },
-				handlesSignal : function (signal) {	harness.signal(signal); },
+				handlesSignal : function (type, payload) { harness.signal(type, payload); },
 				hasConsoleEntries : function (entries) { harness.setConsoleEntries(entries); }
 			};
 		}

@@ -14,8 +14,7 @@ $(function () {
 			dataType: "text",
 			success: function (data) {
 				$("#ide-status").text('saved');
-			},
-			error: handleError
+			}
 		});
 	});
 	
@@ -24,11 +23,10 @@ $(function () {
 function reloadCode() {
 	$.ajax({
 		type: 'GET',
-		url: '/api/code',
+		url: "/api/code",
 		success: function (data) {
 			$('#ide-code').html(data.code);
-		},
-		error: handleError
+		}
 	});
 
 	$.ajax({
@@ -36,12 +34,7 @@ function reloadCode() {
 		url: "/api/ide/console/logs",
 		success: function (data) {
 			$('#ide-console-out').html(data.logs.join('\r\n'));
-		},
-		error: handleError
+		}
 	});
 }
 
-function handleError(jqXHR, textStatus, errorThrown) {
-	//console.log(jqXHR, textStatus, errorThrown);
-	//console.trace();
-}

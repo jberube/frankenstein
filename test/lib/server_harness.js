@@ -1,10 +1,57 @@
-var child_process = require('child_process');
+var server = require('./server_harness'),
+	server = require('../../server/primo'),
+	rest_api = require('../../server/rest-api'),
+	events = require('events'),
+	util = require('util'),
+	assert = require('assert'),
+	Q = require('q');
 
-module.exports.harness = function (source, options) {
-	var settings = options || {};
-	
-	server = child_process.fork(source);
-	
+var ServerHarness = module.exports = function (address, port, callback) {
+	//events.EventEmitter.call(this);
+	this.primo = server.connect();
+	this.api = rest_api.create(this.primo, address, port, callback);
+};
+//util.inherits(ServerHarness, events.EventEmitter);
+
+ServerHarness.connect = function (address, port, callback) {
+	return new ServerHarness(address, port, callback);
+};
+
+ServerHarness.prototype.close = function (callback) {
+	this.api.close(callback);
+};
+
+ServerHarness.prototype.setCode = function (code, callback) {
+	this.primo.pushCode(code, callback);
+};
+
+ServerHarness.prototype.codeIs = function (code) {
+	assert.equal(code, this.primo.getCode());
+};
+
+ServerHarness.prototype.on = function (event, callback) {
+	this.primo.on('signal', function (type, payload) {
+		if (type === event) {
+			callback(type, payload);
+		};
+	});
+};
+
+ServerHarness.prototype.signal = function (signal) {
+	this.primo.signal(signal);
+};
+
+ServerHarness.prototype.setConsoleEntries = function (entries) {
+	var deffered = Q.defer();
+	this.primo.ideConsole = entries;
+
+	deffered.resolve(this.primo);
+
+	return deffered.promise;
+};
+
+/*
+function (options) {
 	server.on('error', function(err) {
 		if (settings.debug) console.trace('PARENT child process error:', err);
 	});
@@ -22,15 +69,10 @@ module.exports.harness = function (source, options) {
 		server.send({type : 'save code', code : code});
 	};
 
-	server.signal = function (signal) {
-		server.send({type : 'fire signal', signal : signal});
-	};
-
 	server.setConsoleEntries = function (entries) {
 		server.send({type : 'set console entries', entries : entries});
 	};
 	
 	return server;
 };
-
-
+*/

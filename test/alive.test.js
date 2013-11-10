@@ -15,19 +15,15 @@ process.on('error', function (err) {
 describe('frankenstein', function () {
 	var browser, harness;
 
-	beforeEach(function (done){
-		harness = server_harness.harness('server/server', { debug: false})
-			.on('message', function (message, sendHandle) {
-				if (message === 'ready') {
-					browser = new Browser(browserOptions);
-					done();
-				}
-			});
+	beforeEach(function (done) {
+		harness = server_harness.connect('127.0.0.1', 8080, function () {
+			browser = new Browser(browserOptions);
+			done();
+		});
 	});
 
-	afterEach(function (){
-		browser = null;
-		if (harness.connected) harness.disconnect();
+	afterEach(function (done) {
+		harness.close(done);
 	});
 	
 	it('is alive!', function (done) {
