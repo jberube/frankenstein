@@ -51,7 +51,7 @@ describe('UI', function() {
 		return browser.visit('index.html')
 			.then(function () {
 				assert.equal(browser.statusCode, 200);
-				return browser.wait(500);
+				return browser.wait(50);
 			})
 			.fail(function (err) { throw err; });
 	}

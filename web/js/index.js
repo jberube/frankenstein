@@ -1,25 +1,27 @@
 $(function () {
 
-	reloadCode();	
-
 	$('#ide-reload').on('click', reloadCode);
-	
-	$('#ide-save').on('click', function () {
-		$.ajax({
-			type: 'POST',
-			url: "/api/code",
-			data: {
-				code: $('#ide-code').val()
-			},
-			dataType: "text",
-			success: function (data) {
-				$("#ide-status").text('saved');
-			},
-			error: handleError
-		});
-	});
+	$('#ide-save').on('click', saveCode);
+
+	reloadCode();	
 	
 });
+
+function saveCode() {
+	var code = $('#ide-code').val();
+	console.log(code);
+	$.ajax({
+		type: 'POST',
+		url: '/api/code',
+		data: { 
+			code: code
+		},
+		success: function (data) {
+			$('#ide-status').text('saved');
+		},
+		error: handleError
+	});
+}
 
 function reloadCode() {
 	$.ajax({
@@ -33,7 +35,7 @@ function reloadCode() {
 
 	$.ajax({
 		type: 'GET',
-		url: "/api/ide/console/logs",
+		url: '/api/ide/console/logs',
 		success: function (data) {
 			$('#ide-console-out').html(data.logs.join('\r\n'));
 		},
@@ -42,6 +44,6 @@ function reloadCode() {
 }
 
 function handleError(jqXHR, textStatus, errorThrown) {
-	//console.log(jqXHR, textStatus, errorThrown);
-	//console.trace();
+	console.log(jqXHR, textStatus, errorThrown);
+	console.trace();
 }
